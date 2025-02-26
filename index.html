@@ -184,6 +184,16 @@
                 <option value="Beschädigt">Beschädigt</option>
                 <option value="Falsch geliefert">Falsch geliefert</option>
             </select>
+            <label for="storageLocation">Lagerplatz</label>
+            <input type="text" id="storageLocation" placeholder="Lagerplatz">
+
+            <label for="storageStatus">Lagerstatus</label>
+            <select id="storageStatus">
+                <option value="Im Lager">Im Lager</option>
+                <option value="Aus dem Lager entnommen">Aus dem Lager entnommen</option>
+                <option value="im Fahrzeug gelagert">im Fahrzeug gelagert</option>
+                <option value="Retourniert">Retourniert</option>
+            </select>
             <label for="price">Preis</label>
             <input type="text" id="price" placeholder="Preis">
             <label for="remarks">Bemerkung</label>
@@ -343,6 +353,8 @@
                     <th>Preis</th>
                     <th>Bemerkung</th>
                     <th>Retourelabel erhalten</th>
+                    <th>Lagerplatz</th>
+                    <th>Lagerstatus</th>
                     <th>Aktionen</th>
                 </tr>
             </thead>

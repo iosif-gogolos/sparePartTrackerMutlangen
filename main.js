@@ -250,37 +250,43 @@ document.addEventListener('DOMContentLoaded', function() {
             reason: document.getElementById('reason').value,
             price: document.getElementById('price').value,
             remarks: document.getElementById('remarks').value,
-            retoureLabelReceived: document.getElementById('retoureLabelReceived').value || "Nein",
-            images: imageFiles// Assign the images array directly
+            retoureLabelReceived: document.getElementById('retoureLabelReceived').value,
+            storageLocation: document.getElementById('storageLocation').value,
+            storageStatus: document.getElementById('storageStatus').value,
+            images: imageFiles
         };
 
-        console.log('Adding new part:', newPart); // Log the new part for debugging
-
         if (isEditing) {
-            updatePartInStorage(newPart);
-            updatePartInExcel(newPart); // Update the Excel sheet
-            document.querySelector(`tr[data-id="${editingId}"]`)?.remove();
-            addPartToTable(newPart);
-            isEditing = false;
-            editingId = null;
-            addButton.textContent = 'Hinzufügen';
+            // Remove the old entry first
+            storedParts = storedParts.filter(part => part.id !== editingId);
+            // Add the updated entry
+            storedParts.push(newPart);
+            // Reindex all parts
+            reindexParts();
+            updatePartInExcel(newPart);
         } else {
-            addPartToTable(newPart);
-            savePartToStorage(newPart);
-            addPartToExcel(newPart); // Add to the Excel sheet
+            storedParts.push(newPart);
+            reindexParts();
+            addPartToExcel(newPart);
         }
 
-        exportButton.classList.remove('hidden');
+        // Reset form and state
         addPartForm.reset();
-        imagePreviewContainer.innerHTML = '';
+        isEditing = false;
+        editingId = null;
+        addButton.textContent = 'Hinzufügen';
         imageFiles = [];
+        imagePreviewContainer.innerHTML = '';
         currentStep = 0;
         photoGuideText.textContent = photoGuideSteps[currentStep];
+
+        // Update UI
+        localStorage.setItem('partsData', JSON.stringify(storedParts));
+        filteredParts = storedParts;
+        renderTable();
         updateDashboard();
         updateClearButtonVisibility();
-
-        // Call renderImagePreviews to update the image previews
-        renderImagePreviews();
+        exportButton.classList.remove('hidden');
     });
 
     function addPartToTable(part) {
@@ -295,15 +301,15 @@ document.addEventListener('DOMContentLoaded', function() {
             <td>${part.price}</td>
             <td>${part.remarks}</td>
             <td>${part.retoureLabelReceived}</td>
+            <td>${part.storageLocation || ''}</td>
+            <td>${part.storageStatus || 'Im Lager'}</td>
             <td>
                 <button class="icon-button delete-btn" title="Löschen">
                     <span class="material-icons">delete</span>
                 </button>
-                <br>
                 <button class="icon-button edit-btn" title="Bearbeiten">
                     <span class="material-icons">edit</span>
                 </button>
-                <br>
                 <button class="icon-button view-images-btn" title="Bilder anzeigen">
                     <span class="material-icons">photo</span>
                 </button>
@@ -397,16 +403,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function reindexParts() {
+        storedParts.sort((a, b) => a.id - b.id);
+        storedParts.forEach((part, index) => {
+            part.id = index;
+        });
+        localStorage.setItem('partsData', JSON.stringify(storedParts));
+    }
+
     function removePartFromTable(id) {
         storedParts = storedParts.filter(part => part.id !== id);
+        reindexParts(); // Reindex after removal
         localStorage.setItem('partsData', JSON.stringify(storedParts));
         filteredParts = storedParts;
         renderTable();
         updateFilterOptions();
-        deletePartFromExcel(id); // Delete from the Excel sheet
+        deletePartFromExcel(id);
         if (!partsTableBody.children.length) exportButton.classList.add('hidden');
         updateClearButtonVisibility();
-        updateDashboard(); // Aktualisiere die Metriken und Handlungsempfehlungen
+        updateDashboard();
     }
 
     function loadPartToForm(part) {
@@ -418,23 +433,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('price').value = part.price;
         document.getElementById('remarks').value = part.remarks;
         document.getElementById('retoureLabelReceived').value = part.retoureLabelReceived;
-        addButton.textContent = 'Speichern';
-        isEditing = true;
+        document.getElementById('storageLocation').value = part.storageLocation || '';
+        document.getElementById('storageStatus').value = part.storageStatus || 'Im Lager';
+        
+        // Store the original ID for later comparison
         editingId = part.id;
-
-        // Bilder laden
-        imagePreviewContainer.innerHTML = '';
-        part.images.forEach((src, index) => {
-            const img = document.createElement('div');
-            img.classList.add('image-preview');
-            img.innerHTML = `
-                <img src="${src}" alt="Preview">
-                <button class="remove-button" data-index="${index}">&times;</button>
-            `;
-            imagePreviewContainer.appendChild(img);
-        });
-
-        // Scroll to the form
+        isEditing = true;
+        addButton.textContent = 'Speichern';
+    
+        // Remove the old row immediately to prevent duplicates
+        document.querySelector(`tr[data-id="${editingId}"]`)?.remove();
+    
+        // Scroll to form
         document.getElementById('addPartForm').scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -720,7 +730,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Erstellen einer Kopie der Daten ohne die `images`-Eigenschaft und ohne leere `id`-Eigenschaft
         const dataWithoutImages = storedParts.map(({ images, id, ...rest }) => {
-            // Filtere die `id`-Eigenschaft nur ein, wenn sie nicht leer ist
             let filteredData = { ...rest };
             if (id) {
                 filteredData.id = id;
