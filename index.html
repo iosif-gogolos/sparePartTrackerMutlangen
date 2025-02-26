@@ -184,22 +184,22 @@
                 <option value="Beschädigt">Beschädigt</option>
                 <option value="Falsch geliefert">Falsch geliefert</option>
             </select>
-            <label for="storageLocation">Lagerplatz</label>
-            <input type="text" id="storageLocation" placeholder="Lagerplatz">
+            <label for="storageLocation">Optional: Lagerplatz</label>
+            <input type="text" id="storageLocation" placeholder="Lagerplatz" required>
 
             <label for="storageStatus">Lagerstatus</label>
             <select id="storageStatus">
                 <option value="Im Lager">Im Lager</option>
                 <option value="Aus dem Lager entnommen">Aus dem Lager entnommen</option>
-                <option value="im Fahrzeug gelagert">im Fahrzeug gelagert</option>
+                <option value="im Fahrzeug gelagert">Beim Spediteur abgegeben</option>
                 <option value="Retourniert">Retourniert</option>
             </select>
-            <label for="price">Preis</label>
+            <label for="price">Optional: Preis</label>
             <input type="text" id="price" placeholder="Preis">
             <label for="remarks">Bemerkung</label>
             <input type="text" id="remarks" placeholder="Bemerkung">
 
-            <label for="retoureLabelReceived">Retoure-Label erhalten</label>
+            <label for="retoureLabelReceived">Optional: Retoure-Label erhalten</label>
             <select id="retoureLabelReceived">
                 <option value="Ja">Ja</option>
                 <option value="Nein" selected>Nein</option>
@@ -207,7 +207,8 @@
             <br>
         
             <!-- Fotoguide -->
-            <label for="photo-guide">Fotos hinzufügen</label>
+            <label for="photo-guide">Optional: Fotos hinzufügen </label>
+            <p style="color: red;">Achtung: Foto-Funktionalität aktuell instabil</p>
             <div id="imagePreviewContainer"></div>
             <div class="photo-guide" id="photoGuide">
                 <h3>Fotoguide</h3>
