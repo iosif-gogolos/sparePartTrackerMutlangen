@@ -356,7 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
         filteredParts = storedParts;
         renderTable();
         updateClearButtonVisibility();
-        updateDashboard(); // Aktualisiere die Metriken und Handlungsempfehlungen
+        updateDashboard(); 
     }
 
     function renderImagePreviews() {
