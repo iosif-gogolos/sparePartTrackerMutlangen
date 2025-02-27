@@ -163,7 +163,20 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!localStorage.getItem('excelData')) {
             const workbook = XLSX.utils.book_new();
             const worksheetData = [
-                ["ID", "Kennzeichen", "Teilenummer", "Beschreibung", "Reklamationsdatum", "Grund", "Preis", "Bemerkung", "Retoure-Label erhalten"]
+                [
+                    "ID", 
+                    "Kennzeichen", 
+                    "Fahrzeug",  // Neues Feld
+                    "Teilenummer", 
+                    "Beschreibung", 
+                    "Reklamationsdatum", 
+                    "Grund", 
+                    "Preis", 
+                    "Bemerkung", 
+                    "Retoure-Label erhalten",
+                    "Lagerplatz",
+                    "Lagerstatus"
+                ]
             ];
             const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Parts');
@@ -294,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function() {
         newRow.dataset.id = part.id;
         newRow.innerHTML = `
             <td>${part.licensePlate}</td>
+            <td>${part.vehicle || ''}</td>
             <td>${part.partNumber}</td>
             <td>${part.description}</td>
             <td>${part.complaintDate}</td>
@@ -426,6 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function loadPartToForm(part) {
         document.getElementById('licensePlate').value = part.licensePlate;
+        document.getElementById('vehicle').value = part.vehicle || '';
         document.getElementById('partNumber').value = part.partNumber;
         document.getElementById('description').value = part.description;
         document.getElementById('complaintDate').value = part.complaintDate;
@@ -485,6 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const newRow = [
             part.id,
             part.licensePlate,
+            part.vahicle,
             part.partNumber,
             part.description,
             part.complaintDate,
@@ -510,6 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
             parts[partIndex] = [
                 updatedPart.id,
                 updatedPart.licensePlate,
+                updatedPart.vehicle,
                 updatedPart.partNumber,
                 updatedPart.description,
                 updatedPart.complaintDate,
