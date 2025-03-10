@@ -822,6 +822,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newPart = {
                     id: uniqueId++,
                     licensePlate: row[headers.indexOf('licensePlate')] || `Unbekannt ${index}`,
+                    vehicle: row[headers.indexOf('vehicle')] || "",  // Added vehicle field
                     partNumber: row[headers.indexOf('partNumber')] || "",
                     description: row[headers.indexOf('description')] || "",
                     complaintDate: row[headers.indexOf('complaintDate')] || "",
@@ -829,9 +830,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     price: row[headers.indexOf('price')] || "0",
                     remarks: row[headers.indexOf('remarks')] || "",
                     retoureLabelReceived: row[headers.indexOf('retoureLabelReceived')] || "Nein",
+                    storageLocation: row[headers.indexOf('storageLocation')] || "",  // Added storageLocation
+                    storageStatus: row[headers.indexOf('storageStatus')] || "Im Lager",  // Added storageStatus
                     images: []
                 };
-
+    
                 storedParts.push(newPart);
             });
 
